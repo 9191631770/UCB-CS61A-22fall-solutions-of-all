@@ -13,8 +13,7 @@ def lambda_curry2(func):
     >>> lambda_curry2(mod)(123)(10)
     3
     """
-    "*** YOUR CODE HERE ***"
-    return ______
+    return lambda x: lambda y: func(x,y)
 
 
 def lambda_curry2_syntax_check():
@@ -55,7 +54,15 @@ def count_cond(condition):
     >>> count_primes(20)   # 2, 3, 5, 7, 11, 13, 17, 19
     8
     """
-    "*** YOUR CODE HERE ***"
+    def f(n):
+        i = 1
+        count = 0
+        while i <= n:
+            if condition(n, i):
+                count += 1
+            i += 1
+        return count
+    return f
 
 
 def composer(f, g):
@@ -90,7 +97,12 @@ def composite_identity(f, g):
     >>> b1(4)                            # (4 + 1)^2 != 4^2 + 1
     False
     """
-    "*** YOUR CODE HERE ***"
+    def isValid(x):
+        if composer(f,g)(x) == composer(g,f)(x):
+            return True
+        else:
+            return False
+    return isValid
 
 
 def cycle(f1, f2, f3):
@@ -119,4 +131,21 @@ def cycle(f1, f2, f3):
     >>> do_two_cycles(1)
     19
     """
-    "*** YOUR CODE HERE ***"
+    def func1(n):
+        def func2(x):
+            def update(a, func):
+                if a == 1:
+                    return composer(f1, func)
+                elif a == 2:
+                    return composer(f2, func)
+                elif a == 0:
+                    return composer(f3, func)
+            def cycled(x):
+                return x
+            count = 1
+            while count <= n:  # 嵌套函数中，可以使用外层函数的参数，但不能改变它们！！
+                cycled = update(count % 3, cycled)
+                count += 1
+            return cycled(x)     
+        return func2
+    return func1
