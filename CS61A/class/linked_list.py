@@ -86,3 +86,90 @@ def join_link(s, separator):
     else:
         return str(first(s)) + separator + join_link(rest(s), separator)
     
+# object representation
+class Link:
+    """A linked list.
+
+    >>> s = Link(1)
+    >>> s.first
+    1
+    >>> s.rest is Link.empty
+    True
+    >>> s = Link(2, Link(3, Link(4)))
+    >>> s.first = 5
+    >>> s.rest.first = 6
+    >>> s.rest.rest = Link.empty
+    >>> s                                    # Displays the contents of repr(s)
+    Link(5, Link(6))
+    >>> s.rest = Link(7, Link(Link(8, Link(9))))
+    >>> s
+    Link(5, Link(7, Link(Link(8, Link(9)))))
+    >>> print(s)                             # Prints str(s)
+    <5 7 <8 9>>
+    """
+    empty = ()
+
+    def __init__(self, first, rest=empty):
+        assert rest is Link.empty or isinstance(rest, Link)
+        self.first = first
+        self.rest = rest
+
+    def __repr__(self):
+        if self.rest is not Link.empty:
+            rest_repr = ', ' + repr(self.rest)
+        else:
+            rest_repr = ''
+        return 'Link(' + repr(self.first) + rest_repr + ')'
+
+    def __str__(self):
+        string = '<'
+        while self.rest is not Link.empty:
+            string += str(self.first) + ' '
+            self = self.rest
+        return string + str(self.first) + '>'
+
+def square(x):
+    return x * x
+
+def odd(x):
+    return x % 2 == 1
+
+# Range, Map, and Filter for Linked Lists
+
+def range_link(start, end):
+    """
+    >>> range_link(3, 6)
+    Link(3, Link(4, Link(5)))
+    """
+    if start >= end:
+        return Link.empty
+    else:
+        return Link(start, range_link(start + 1, end))
+
+def map_link(f, s):
+    """
+    >>> map_link(square, range_link(3, 6))
+    Link(9, Link(16, Link(25)))
+    """
+    if s is Link.empty:
+        return s
+    else:
+        return Link(f(s.first), map_link(f, s.rest))
+
+def filter_link(f, s):
+    """
+    >>> filter_link(odd, range_link(3, 6))
+    Link(3, Link(5))
+    """
+    if s is Link.empty:
+        return s
+    filtered_rest = filter_link(f, s.rest)
+    if f(s.first):
+        return Link(s.first, filtered_rest)
+    else:
+        return filtered_rest
+
+ 
+
+
+
